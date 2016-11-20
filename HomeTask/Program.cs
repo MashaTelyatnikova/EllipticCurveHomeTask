@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Numerics;
 using EllipticCurveUtils;
 using Fclp;
 
@@ -14,6 +15,7 @@ namespace HomeTask
 
             public int? B { get; set; }
 
+            public int? C { get; set; }
             public int? P { get; set; }
 
             public string InputFile { get; set; }
@@ -34,11 +36,16 @@ namespace HomeTask
                 .As('b')
                 .Required()
                 .WithDescription("Параметр b");
-                commandLineParser
+            commandLineParser
                 .Setup(options => options.P)
                 .As('p')
                 .Required()
                 .WithDescription("Параметр p");
+            commandLineParser
+                .Setup(options => options.C)
+                .As('c')
+                .Required()
+                .WithDescription("Параметр c");
             commandLineParser.Setup(options => options.InputFile)
                 .As("if")
                 .WithDescription("Параметр input file");
@@ -60,6 +67,7 @@ namespace HomeTask
                 commandLineParser.Object.P == null)
             {
                 Console.WriteLine("Неправильные параметры");
+                Environment.Exit(0);
             }
 
             StreamReader fileReader = null;
@@ -81,11 +89,32 @@ namespace HomeTask
                     var tokenizer = new StreamTokenizer(fileReader ?? Console.In);
                     var writer = fileWriter ?? Console.Out;
 
-                    var curve = new EllipticCurve(
-                        commandLineParser.Object.A.Value,
-                        commandLineParser.Object.B.Value,
-                        commandLineParser.Object.P.Value
-                    );
+                    EllipticCurve curve = null;
+                    var p = new BigInteger(commandLineParser.Object.P.Value);
+                    if (p.IsPowerOfTwo)
+                    {
+                        if (commandLineParser.Object.C == null)
+                        {
+                            Console.WriteLine("Надо указать параметр c");
+                            Environment.Exit(0);
+                        }
+                        var m = 0;
+                        while (p != 1)
+                        {
+                            p /= 2;
+                            ++m;
+                        }
+                        curve = new SuperSingularEllipticCurve(commandLineParser.Object.A.Value,
+                            commandLineParser.Object.B.Value, (int) p, commandLineParser.Object.C.Value);
+                    }
+                    else
+                    {
+                        curve = new EllipticCurve(
+                            commandLineParser.Object.A.Value,
+                            commandLineParser.Object.B.Value,
+                            commandLineParser.Object.P.Value
+                        );
+                    }
 
                     if (!curve.IsNonSpecial())
                     {

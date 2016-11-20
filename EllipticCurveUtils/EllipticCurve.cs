@@ -5,10 +5,10 @@ namespace EllipticCurveUtils
 {
     public class EllipticCurve
     {
-        private readonly int a;
-        private readonly int b;
-        private readonly int p;
-        private static readonly Point Zero = new Point(0, 0);
+        protected readonly int a;
+        protected readonly int b;
+        protected readonly int p;
+        protected static readonly Point Zero = new Point(0, 0);
 
         public EllipticCurve(int a, int b, int p)
         {
@@ -22,7 +22,7 @@ namespace EllipticCurveUtils
             return -(4*a*a*a + 27*b*b) != 0;
         }
 
-        public bool Contains(Point point)
+        public virtual bool Contains(Point point)
         {
             BigInteger ySq = point.Y*point.Y;
             BigInteger res = point.X*point.X*point.X + a*point.X + b;
@@ -30,7 +30,7 @@ namespace EllipticCurveUtils
             return ySq.Mode(p) == res.Mode(p);
         }
 
-        public Point Add(Point first, Point second)
+        public virtual Point Add(Point first, Point second)
         {
             if (first == Zero)
             {

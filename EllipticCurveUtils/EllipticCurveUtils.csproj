@@ -44,6 +44,7 @@
     <Compile Include="EllipticCurve.cs" />
     <Compile Include="IntegerExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SuperSingularEllipticCurve.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
