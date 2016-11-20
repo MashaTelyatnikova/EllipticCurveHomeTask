@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Drawing;
-using System.Linq;
+using System.IO;
 using EllipticCurveUtils;
 using Fclp;
 
@@ -15,6 +15,10 @@ namespace HomeTask
             public int? B { get; set; }
 
             public int? P { get; set; }
+
+            public string InputFile { get; set; }
+
+            public string OutputFile { get; set; }
         }
 
         static void Main(string[] args)
@@ -30,14 +34,22 @@ namespace HomeTask
                 .As('b')
                 .Required()
                 .WithDescription("Параметр b");
-            commandLineParser.Setup(options => options.P)
+                commandLineParser
+                .Setup(options => options.P)
                 .As('p')
                 .Required()
                 .WithDescription("Параметр p");
+            commandLineParser.Setup(options => options.InputFile)
+                .As("if")
+                .WithDescription("Параметр input file");
+            commandLineParser.Setup(options => options.OutputFile)
+                .As("of")
+                .WithDescription("Параметр output file");
 
             commandLineParser
                 .SetupHelp("h", "help")
-                .WithHeader($"{AppDomain.CurrentDomain.FriendlyName} [-a a] [-b b] [-p p]")
+                .WithHeader(
+                    $"{AppDomain.CurrentDomain.FriendlyName} [-a a] [-b b] [-p p] [-if input file] [-of output file]")
                 .Callback(text => Console.WriteLine(text));
             if (commandLineParser.Parse(args).HelpCalled)
             {
@@ -50,32 +62,86 @@ namespace HomeTask
                 Console.WriteLine("Неправильные параметры");
             }
 
-            var curve = new EllipticCurve(
-                commandLineParser.Object.A.Value,
-                commandLineParser.Object.B.Value,
-                commandLineParser.Object.P.Value
-            );
-
-            while (true)
+            StreamReader fileReader = null;
+            if (commandLineParser.Object.InputFile != null)
             {
+                fileReader = new StreamReader(commandLineParser.Object.InputFile);
+            }
+
+            try
+            {
+                StreamWriter fileWriter = null;
+                if (commandLineParser.Object.OutputFile != null)
+                {
+                    fileWriter = new StreamWriter(commandLineParser.Object.OutputFile);
+                }
+
                 try
                 {
-                    Console.WriteLine("Enter x1 y1");
-                    var first = Console.ReadLine().Split(' ').Select(int.Parse).ToArray();
+                    var tokenizer = new StreamTokenizer(fileReader ?? Console.In);
+                    var writer = fileWriter ?? Console.Out;
 
-                    Console.WriteLine("Enter x2 y2");
+                    var curve = new EllipticCurve(
+                        commandLineParser.Object.A.Value,
+                        commandLineParser.Object.B.Value,
+                        commandLineParser.Object.P.Value
+                    );
 
-                    var second = Console.ReadLine().Split(' ').Select(int.Parse).ToArray();
+                    if (!curve.IsNonSpecial())
+                    {
+                        writer.WriteLine("Кривая особая");
+                    }
+                    else
+                    {
+                        var t = tokenizer.NextInt();
+                        var startPoint = new Point(0, 0);
+                        while (t > 0)
+                        {
+                            var point = new Point(tokenizer.NextInt(), tokenizer.NextInt());
+                            if (!curve.Contains(point))
+                            {
+                                writer.WriteLine($"Кривая не содержит точку {point.X}, {point.Y}");
+                            }
+                            else
+                            {
+                                startPoint = curve.Add(startPoint, point);
+                            }
+                            --t;
+                        }
+                        writer.WriteLine($"Результат сложения точек = ({startPoint.X}, {startPoint.Y})");
 
-                    var point1 = new Point(first[0], first[1]);
-                    var point2 = new Point(second[0], second[1]);
-                    var result = curve.Add(point1, point2);
-                    Console.WriteLine($"({result.X}, {result.Y})");
+                        var s = tokenizer.NextInt();
+                        while (s > 0)
+                        {
+                            var n = tokenizer.NextInt();
+                            var point = new Point(tokenizer.NextInt(), tokenizer.NextInt());
+                            if (!curve.Contains(point))
+                            {
+                                writer.WriteLine($"Кривая не содержит точку {point.X}, {point.Y}");
+                            }
+                            else
+                            {
+                                var start = point;
+                                while (n > 1)
+                                {
+                                    start = curve.Add(start, point);
+                                    --n;
+                                }
+
+                                writer.WriteLine($"Результат = ({start.X}, {start.Y})");
+                            }
+                            --s;
+                        }
+                    }
                 }
-                catch (Exception ex)
+                finally
                 {
-                    Console.WriteLine("Вы ввели неправильные данные");
+                    fileWriter?.Close();
                 }
+            }
+            finally
+            {
+                fileReader?.Close();
             }
         }
     }

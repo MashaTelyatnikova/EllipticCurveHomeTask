@@ -1,19 +1,20 @@
 ﻿using System;
+using System.Numerics;
 
 namespace EllipticCurveUtils
 {
     public static class IntegerExtensions
     {
-        public static int Mode(this int x, int p)
+        public static int Mode(this BigInteger x, int p)
         {
             var res = x%p;
-            return res < 0 ? res + p : res;
+            return (int) (res < 0 ? res + p : res);
         }
 
-        public static int Invert(this int a, int m)
+        public static BigInteger Invert(this BigInteger a, BigInteger m)
         {
-            var x = 0;
-            var y = 0;
+            BigInteger x = 0;
+            BigInteger y = 0;
             var g = Gcd(a, m, ref x, ref y);
             if (g != 1)
             {
@@ -22,7 +23,7 @@ namespace EllipticCurveUtils
             return (x%m + m)%m;
         }
 
-        private static int Gcd(int a, int b, ref int x, ref int y)
+        private static BigInteger Gcd(BigInteger a, BigInteger b, ref BigInteger x, ref BigInteger y)
         {
             if (a == 0)
             {
@@ -31,8 +32,8 @@ namespace EllipticCurveUtils
                 return b;
             }
 
-            var x1 = 0;
-            var y1 = 0;
+            BigInteger x1 = 0;
+            BigInteger y1 = 0;
             var d = Gcd(b%a, a, ref x1, ref y1);
             x = y1 - (b/a)*x1;
             y = x1;

@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Numerics;
 
 namespace EllipticCurveUtils
 {
@@ -7,6 +8,7 @@ namespace EllipticCurveUtils
         private readonly int a;
         private readonly int b;
         private readonly int p;
+        private static readonly Point Zero = new Point(0, 0);
 
         public EllipticCurve(int a, int b, int p)
         {
@@ -15,21 +17,44 @@ namespace EllipticCurveUtils
             this.p = p;
         }
 
+        public bool IsNonSpecial()
+        {
+            return -(4*a*a*a + 27*b*b) != 0;
+        }
+
+        public bool Contains(Point point)
+        {
+            BigInteger ySq = point.Y*point.Y;
+            BigInteger res = point.X*point.X*point.X + a*point.X + b;
+
+            return ySq.Mode(p) == res.Mode(p);
+        }
+
         public Point Add(Point first, Point second)
         {
-            var numerator = 0;
-            var denominator = 0;
+            if (first == Zero)
+            {
+                return second;
+            }
+
+            if (second == Zero)
+            {
+                return first;
+            }
+            BigInteger numerator = 0;
+            BigInteger denominator = 0;
             if (first.Equals(second))
             {
                 numerator = 3*first.X*first.X + a;
-                denominator = (2*first.Y).Mode(p);
+                denominator = 2*first.Y;
             }
             else
             {
                 numerator = second.Y - first.Y;
-                denominator = (second.X - first.X).Mode(p);
+                denominator = second.X - first.X;
             }
 
+            denominator = denominator.Mode(p);
             var invertedToDenominator = denominator.Invert(p);
             var lambda = numerator*invertedToDenominator;
 
