@@ -56,7 +56,7 @@ namespace HomeTask
             commandLineParser
                 .SetupHelp("h", "help")
                 .WithHeader(
-                    $"{AppDomain.CurrentDomain.FriendlyName} [-a a] [-b b] [-p p] [-if input file] [-of output file]")
+                    $"{AppDomain.CurrentDomain.FriendlyName} [-a a] [-b b] [-c c] [-p p] [-if input file] [-of output file]")
                 .Callback(text => Console.WriteLine(text));
             if (commandLineParser.Parse(args).HelpCalled)
             {

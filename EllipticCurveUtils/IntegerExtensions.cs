@@ -23,6 +23,17 @@ namespace EllipticCurveUtils
             return (x%m + m)%m;
         }
 
+        public static BigInteger Pow(this BigInteger a, int pow)
+        {
+            BigInteger result = a;
+            while (pow > 0)
+            {
+                result *= a;
+                --pow;
+            }
+
+            return result;
+        }
         private static BigInteger Gcd(BigInteger a, BigInteger b, ref BigInteger x, ref BigInteger y)
         {
             if (a == 0)
