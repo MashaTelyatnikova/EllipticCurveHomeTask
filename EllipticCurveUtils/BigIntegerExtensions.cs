@@ -5,10 +5,10 @@ namespace EllipticCurveUtils
 {
     public static class IntegerExtensions
     {
-        public static int Mode(this BigInteger x, int p)
+        public static BigInteger Mode(this BigInteger x, BigInteger p)
         {
             var res = x%p;
-            return (int) (res < 0 ? res + p : res);
+            return res < 0 ? res + p : res;
         }
 
         public static BigInteger Invert(this BigInteger a, BigInteger m)
@@ -34,6 +34,7 @@ namespace EllipticCurveUtils
 
             return result;
         }
+
         private static BigInteger Gcd(BigInteger a, BigInteger b, ref BigInteger x, ref BigInteger y)
         {
             if (a == 0)

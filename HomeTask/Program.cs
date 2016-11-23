@@ -26,26 +26,6 @@ namespace HomeTask
         static void Main(string[] args)
         {
             var commandLineParser = new FluentCommandLineParser<RunOptions>();
-            commandLineParser
-                .Setup(options => options.A)
-                .As('a')
-                .Required()
-                .WithDescription("Параметр a");
-            commandLineParser
-                .Setup(options => options.B)
-                .As('b')
-                .Required()
-                .WithDescription("Параметр b");
-            commandLineParser
-                .Setup(options => options.P)
-                .As('p')
-                .Required()
-                .WithDescription("Параметр p");
-            commandLineParser
-                .Setup(options => options.C)
-                .As('c')
-                .Required()
-                .WithDescription("Параметр c");
             commandLineParser.Setup(options => options.InputFile)
                 .As("if")
                 .WithDescription("Параметр input file");
@@ -63,6 +43,7 @@ namespace HomeTask
                 return;
             }
 
+            BigInteger p1 = BigInteger.Parse("6277101735386680763835789423207666416083908700390324961279");
             if (commandLineParser.Object.A == null || commandLineParser.Object.B == null ||
                 commandLineParser.Object.P == null)
             {
@@ -90,30 +71,43 @@ namespace HomeTask
                     var writer = fileWriter ?? Console.Out;
 
                     EllipticCurve curve = null;
-                    var p = new BigInteger(commandLineParser.Object.P.Value);
-                    if (p.IsPowerOfTwo)
+                    var characteristic = tokenizer.NextInt();
+                    var modular = BigInteger.Parse(tokenizer.NextWord());
+                    var a = BigInteger.Parse(tokenizer.NextWord());
+                    var b = BigInteger.Parse(tokenizer.NextWord());
+                    if (characteristic == 0)
                     {
-                        if (commandLineParser.Object.C == null)
+                        curve = new OrdinaryEllipticCurve(a, b, modular);
+                    }
+                    else if (characteristic == 1)
+                    {
+                        var c = BigInteger.Parse(tokenizer.NextWord());
+                        var type = tokenizer.NextInt();
+                        switch (type)
                         {
-                            Console.WriteLine("Надо указать параметр c");
-                            Environment.Exit(0);
+                            case 0:
+                            {
+                                curve = new SuperSingularEllipticCurve(a, b, c, modular);
+                                break;
+                            }
+                            case 1:
+                            {
+                                
+                                break;
+                            }
+                            default:
+                            {
+                                Console.WriteLine(
+                                    "Тип кривой для поля с характеристикой 2 можеть быть либо 0 (суперсингулярная) либо 1(несуперсингулярная)");
+                                Environment.Exit(0);
+                                break;
+                            }
                         }
-                        var m = 0;
-                        while (p != 1)
-                        {
-                            p /= 2;
-                            ++m;
-                        }
-                        curve = new SuperSingularEllipticCurve(commandLineParser.Object.A.Value,
-                            commandLineParser.Object.B.Value, (int) p, commandLineParser.Object.C.Value);
                     }
                     else
                     {
-                        curve = new EllipticCurve(
-                            commandLineParser.Object.A.Value,
-                            commandLineParser.Object.B.Value,
-                            commandLineParser.Object.P.Value
-                        );
+                        Console.WriteLine("Значение характеристики кода может быть либо 0 (!= 2 и !=3) или 1(==2)");
+                        Environment.Exit(0);
                     }
 
                     if (!curve.IsNonSpecial())

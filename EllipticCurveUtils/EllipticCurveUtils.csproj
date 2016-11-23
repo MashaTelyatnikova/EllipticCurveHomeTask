@@ -42,7 +42,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EllipticCurve.cs" />
+    <Compile Include="EllipticCurvePoint.cs" />
+    <Compile Include="IEllipticCurve.cs" />
     <Compile Include="IntegerExtensions.cs" />
+    <Compile Include="NonSuperSingularEllipticCurve.cs" />
+    <Compile Include="OrdinaryEllipticCurve.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SuperSingularEllipticCurve.cs" />
   </ItemGroup>
