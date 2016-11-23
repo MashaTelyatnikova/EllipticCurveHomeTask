@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using EllipticCurveUtils;
 using Fclp;
@@ -11,13 +12,6 @@ namespace HomeTask
     {
         private class RunOptions
         {
-            public int? A { get; set; }
-
-            public int? B { get; set; }
-
-            public int? C { get; set; }
-            public int? P { get; set; }
-
             public string InputFile { get; set; }
 
             public string OutputFile { get; set; }
@@ -43,14 +37,6 @@ namespace HomeTask
                 return;
             }
 
-            BigInteger p1 = BigInteger.Parse("6277101735386680763835789423207666416083908700390324961279");
-            if (commandLineParser.Object.A == null || commandLineParser.Object.B == null ||
-                commandLineParser.Object.P == null)
-            {
-                Console.WriteLine("Неправильные параметры");
-                Environment.Exit(0);
-            }
-
             StreamReader fileReader = null;
             if (commandLineParser.Object.InputFile != null)
             {
@@ -72,9 +58,9 @@ namespace HomeTask
 
                     EllipticCurve curve = null;
                     var characteristic = tokenizer.NextInt();
-                    var modular = BigInteger.Parse(tokenizer.NextWord());
-                    var a = BigInteger.Parse(tokenizer.NextWord());
-                    var b = BigInteger.Parse(tokenizer.NextWord());
+                    var modular = tokenizer.NextWord().ToBigInteger();
+                    var a = tokenizer.NextWord().ToBigInteger();
+                    var b = tokenizer.NextWord().ToBigInteger();
                     if (characteristic == 0)
                     {
                         curve = new OrdinaryEllipticCurve(a, b, modular);
@@ -92,7 +78,6 @@ namespace HomeTask
                             }
                             case 1:
                             {
-                                
                                 break;
                             }
                             default:
@@ -117,10 +102,11 @@ namespace HomeTask
                     else
                     {
                         var t = tokenizer.NextInt();
-                        var startPoint = new Point(0, 0);
+                        var startPoint = new EllipticCurvePoint(0, 0);
                         while (t > 0)
                         {
-                            var point = new Point(tokenizer.NextInt(), tokenizer.NextInt());
+                            var point = new EllipticCurvePoint(tokenizer.NextWord().ToBigInteger(),
+                                tokenizer.NextWord().ToBigInteger());
                             if (!curve.Contains(point))
                             {
                                 writer.WriteLine($"Кривая не содержит точку {point.X}, {point.Y}");
@@ -137,7 +123,8 @@ namespace HomeTask
                         while (s > 0)
                         {
                             var n = tokenizer.NextInt();
-                            var point = new Point(tokenizer.NextInt(), tokenizer.NextInt());
+                            var point = new EllipticCurvePoint(tokenizer.NextWord().ToBigInteger(),
+                                tokenizer.NextWord().ToBigInteger());
                             if (!curve.Contains(point))
                             {
                                 writer.WriteLine($"Кривая не содержит точку {point.X}, {point.Y}");
