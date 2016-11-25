@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace EllipticCurveUtils
+namespace HomeTask.EllipticCurve
 {
     public class EllipticCurvePoint
     {

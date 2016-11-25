@@ -1,4 +1,6 @@
-﻿namespace EllipticCurveUtils
+﻿using EllipticCurveUtils;
+
+namespace HomeTask.EllipticCurve
 {
     public interface IEllipticCurve
     {

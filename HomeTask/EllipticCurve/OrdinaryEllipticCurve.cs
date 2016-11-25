@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
+using EllipticCurveUtils;
 
-namespace EllipticCurveUtils
+namespace HomeTask.EllipticCurve
 {
     public class OrdinaryEllipticCurve : EllipticCurve
     {

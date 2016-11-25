@@ -3,6 +3,7 @@ using System.IO;
 using System.Numerics;
 using EllipticCurveUtils;
 using Fclp;
+using HomeTask.EllipticCurve;
 
 namespace HomeTask
 {
@@ -67,7 +68,7 @@ namespace HomeTask
                     var tokenizer = new StreamTokenizer(fileReader ?? Console.In);
                     var writer = fileWriter ?? Console.Out;
 
-                    EllipticCurve curve = null;
+                    EllipticCurve.EllipticCurve curve = null;
                     var characteristic = tokenizer.NextInt();
                     var modular = tokenizer.NextWord().ToBigInteger();
                     var a = tokenizer.NextWord().ToBigInteger();

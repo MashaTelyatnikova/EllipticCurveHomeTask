@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 namespace HomeTask
@@ -9,7 +10,13 @@ namespace HomeTask
     {
         public static BigInteger ToBigInteger(this string str)
         {
-            return BigInteger.Parse(str);
+            BigInteger res;
+            if (BigInteger.TryParse(str, out res))
+            {
+                return res;
+            }
+
+            return new BigInteger(str.ToBytes().ToArray());
         }
 
         public static IEnumerable<byte> ToBytes(this string str)

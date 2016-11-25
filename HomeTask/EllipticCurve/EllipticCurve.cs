@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Drawing;
 using System.Numerics;
+using EllipticCurveUtils;
 
-namespace EllipticCurveUtils
+namespace HomeTask.EllipticCurve
 {
     public abstract class EllipticCurve : IEllipticCurve
     {
