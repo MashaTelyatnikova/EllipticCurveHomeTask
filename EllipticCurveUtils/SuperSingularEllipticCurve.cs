@@ -6,19 +6,19 @@ namespace EllipticCurveUtils
     {
         private readonly BigInteger c;
 
-        public SuperSingularEllipticCurve(BigInteger a, BigInteger b, BigInteger c, BigInteger p) : base(a, b, p)
+        public SuperSingularEllipticCurve(BigInteger a, BigInteger b, BigInteger c, BigInteger p) :
+            base(a, b, p, (x, y) => y.Pow(2) + y * a - x.Pow(3) - x * b - c)
         {
             this.c = c;
-            this.equation = (x, y) => y.Pow(2) + y*a - x.Pow(3) - x*b - c;
         }
 
         public override EllipticCurvePoint Add(EllipticCurvePoint first, EllipticCurvePoint second)
         {
             if (first.Equals(second))
             {
-                BigInteger numerator = first.X.Pow(4) + b.Pow(2);
-                BigInteger denominator = a*a;
-                BigInteger invertedDemominator = denominator.Invert(p);
+                var numerator = first.X.Pow(4) + b.Pow(2);
+                var denominator = a*a;
+                var invertedDemominator = denominator.Invert(p);
 
                 var x = (numerator*invertedDemominator).Mode(p);
                 var y =
@@ -29,9 +29,9 @@ namespace EllipticCurveUtils
             }
             else
             {
-                BigInteger numerator = first.Y + second.Y;
-                BigInteger denominator = first.X + second.X;
-                BigInteger invertedDenominator = denominator.Invert(p);
+                var numerator = first.Y + second.Y;
+                var denominator = first.X + second.X;
+                var invertedDenominator = denominator.Invert(p);
                 var lambda = (numerator*invertedDenominator).Mode(p);
 
                 var x = (lambda*lambda + first.X + second.X).Mode(p);

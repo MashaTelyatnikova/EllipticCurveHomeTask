@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Numerics;
 using EllipticCurveUtils;
 using Fclp;
@@ -17,38 +15,51 @@ namespace HomeTask
             public string OutputFile { get; set; }
         }
 
-        static void Main(string[] args)
+        private static readonly FluentCommandLineParser<RunOptions> Parser;
+
+        static Program()
         {
-            var commandLineParser = new FluentCommandLineParser<RunOptions>();
-            commandLineParser.Setup(options => options.InputFile)
+            Parser = new FluentCommandLineParser<RunOptions>();
+            Parser.Setup(options => options.InputFile)
                 .As("if")
                 .WithDescription("Параметр input file");
-            commandLineParser.Setup(options => options.OutputFile)
+            Parser.Setup(options => options.OutputFile)
                 .As("of")
                 .WithDescription("Параметр output file");
-
-            commandLineParser
+            Parser
                 .SetupHelp("h", "help")
                 .WithHeader(
-                    $"{AppDomain.CurrentDomain.FriendlyName} [-a a] [-b b] [-c c] [-p p] [-if input file] [-of output file]")
+                    $"{AppDomain.CurrentDomain.FriendlyName} [-if input file] [-of output file]")
                 .Callback(text => Console.WriteLine(text));
-            if (commandLineParser.Parse(args).HelpCalled)
+        }
+
+        public static void Main(string[] args)
+        {
+            var arguments = Parser.Parse(args);
+
+            if (arguments.HelpCalled)
             {
                 return;
             }
 
-            StreamReader fileReader = null;
-            if (commandLineParser.Object.InputFile != null)
+            if (arguments.HasErrors)
             {
-                fileReader = new StreamReader(commandLineParser.Object.InputFile);
+                Parser.HelpOption.ShowHelp(Parser.Options);
+                return;
+            }
+
+            StreamReader fileReader = null;
+            if (Parser.Object.InputFile != null)
+            {
+                fileReader = new StreamReader(Parser.Object.InputFile);
             }
 
             try
             {
                 StreamWriter fileWriter = null;
-                if (commandLineParser.Object.OutputFile != null)
+                if (Parser.Object.OutputFile != null)
                 {
-                    fileWriter = new StreamWriter(commandLineParser.Object.OutputFile);
+                    fileWriter = new StreamWriter(Parser.Object.OutputFile);
                 }
 
                 try
@@ -69,6 +80,7 @@ namespace HomeTask
                     {
                         var c = BigInteger.Parse(tokenizer.NextWord());
                         var type = tokenizer.NextInt();
+                        modular = BigInteger.Pow(2, (int) modular);
                         switch (type)
                         {
                             case 0:
@@ -78,6 +90,7 @@ namespace HomeTask
                             }
                             case 1:
                             {
+                                curve = new NonSupersSingularEllipticCurve(a, b, c, modular);
                                 break;
                             }
                             default:

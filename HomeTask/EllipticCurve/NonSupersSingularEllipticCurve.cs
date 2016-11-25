@@ -7,12 +7,17 @@ namespace EllipticCurveUtils
     {
         private readonly BigInteger c;
         public NonSupersSingularEllipticCurve(BigInteger a, BigInteger b, BigInteger c, BigInteger p) : 
-            base(a, b, p, (x, y) => x.Pow(2))
+            base(a, b, p, (x, y) => y.Pow(2) - x*y - x.Pow(3) - a*x.Pow(2) - b)
         {
             this.c = c;
         }
 
-        public override EllipticCurvePoint Add(EllipticCurvePoint first, EllipticCurvePoint second)
+        protected override EllipticCurvePoint AddDifferent(EllipticCurvePoint first, EllipticCurvePoint second)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override EllipticCurvePoint DoublePoint(EllipticCurvePoint firstd)
         {
             throw new NotImplementedException();
         }

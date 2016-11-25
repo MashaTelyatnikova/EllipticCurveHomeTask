@@ -12,7 +12,8 @@ namespace EllipticCurveUtils
         protected static readonly EllipticCurvePoint Zero = new EllipticCurvePoint(0, 0);
         private readonly Func<BigInteger, BigInteger, BigInteger> equation;
 
-        protected EllipticCurve(BigInteger a, BigInteger b, BigInteger p, Func<BigInteger, BigInteger, BigInteger> equation)
+        protected EllipticCurve(BigInteger a, BigInteger b, BigInteger p,
+            Func<BigInteger, BigInteger, BigInteger> equation)
         {
             this.a = a;
             this.b = b;
@@ -33,7 +34,23 @@ namespace EllipticCurveUtils
             return ySq.Mode(p) == res.Mode(p);
         }
 
-        public abstract EllipticCurvePoint Add(EllipticCurvePoint first, EllipticCurvePoint second);
+        public EllipticCurvePoint Add(EllipticCurvePoint first, EllipticCurvePoint second)
+        {
+            if (Zero.Equals(first))
+            {
+                return second;
+            }
+
+            if (Zero.Equals(second))
+            {
+                return first;
+            }
+
+            return first.Equals(second) ? DoublePoint(first) : AddDifferent(first, second);
+        }
+
+        protected abstract EllipticCurvePoint DoublePoint(EllipticCurvePoint point);
+        protected abstract EllipticCurvePoint AddDifferent(EllipticCurvePoint first, EllipticCurvePoint second);
 
         public bool Contains(EllipticCurvePoint point)
         {

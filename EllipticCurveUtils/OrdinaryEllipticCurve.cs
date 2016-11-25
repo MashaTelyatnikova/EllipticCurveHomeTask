@@ -4,9 +4,9 @@ namespace EllipticCurveUtils
 {
     public class OrdinaryEllipticCurve : EllipticCurve
     {
-        public OrdinaryEllipticCurve(BigInteger a, BigInteger b, BigInteger p) : base(a, b, p)
+        public OrdinaryEllipticCurve(BigInteger a, BigInteger b, BigInteger p) : 
+            base(a, b, p, (x, y) => y.Pow(2) - x.Pow(3) - x * a - b)
         {
-            this.equation = (x, y) => y.Pow(2) - x.Pow(3) - x*a - b;
         }
 
         public override EllipticCurvePoint Add(EllipticCurvePoint first, EllipticCurvePoint second)

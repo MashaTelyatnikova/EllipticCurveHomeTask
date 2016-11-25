@@ -7,8 +7,8 @@ namespace HomeTask
 {
     public class StreamTokenizer
     {
-        private IEnumerator<string> tokensEnumerator;
-        private const int blockSize = 1024;
+        private readonly IEnumerator<string> tokensEnumerator;
+        private const int BlockSize = 1024;
 
         public StreamTokenizer(TextReader inputStream)
         {
@@ -28,7 +28,7 @@ namespace HomeTask
         public void ProcessQueryCollection(Action<StreamTokenizer> processor)
         {
             var count = NextInt();
-            for (int i = 0; i < count; ++i)
+            for (var i = 0; i < count; ++i)
             {
                 processor(this);
             }
@@ -41,13 +41,14 @@ namespace HomeTask
 
         private IEnumerable<string> ReadStream(TextReader reader)
         {
-            StringBuilder currentToken = new StringBuilder();
-            char[] buffer = new char[blockSize];
+            var currentToken = new StringBuilder();
+            var buffer = new char[BlockSize];
             int readCount;
-            while ((readCount = reader.Read(buffer, 0, blockSize)) != 0)
+            while ((readCount = reader.Read(buffer, 0, BlockSize)) != 0)
             {
-                for (int i = 0; i < readCount; ++i)
-                    if (!Char.IsWhiteSpace(buffer[i]))
+                for (var i = 0; i < readCount; ++i)
+                {
+                    if (!char.IsWhiteSpace(buffer[i]))
                     {
                         currentToken.Append(buffer[i]);
                     }
@@ -56,10 +57,13 @@ namespace HomeTask
                         yield return currentToken.ToString();
                         currentToken.Clear();
                     }
+                }
             }
+
             if (currentToken.Length != 0)
+            {
                 yield return currentToken.ToString();
+            }
         }
     }
-
 }
