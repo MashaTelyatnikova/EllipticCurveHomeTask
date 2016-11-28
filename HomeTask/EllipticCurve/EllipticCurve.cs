@@ -27,14 +27,6 @@ namespace HomeTask.EllipticCurve
             return -(4*a*a*a + 27*b*b) != 0;
         }
 
-        public virtual bool Contains(Point point)
-        {
-            BigInteger ySq = point.Y*point.Y;
-            BigInteger res = point.X*point.X*point.X + a*point.X + b;
-
-            return ySq.Mode(p) == res.Mode(p);
-        }
-
         public EllipticCurvePoint Add(EllipticCurvePoint first, EllipticCurvePoint second)
         {
             if (Zero.Equals(first))

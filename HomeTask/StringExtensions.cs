@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Numerics;
 
@@ -16,19 +17,7 @@ namespace HomeTask
                 return res;
             }
 
-            return new BigInteger(str.ToBytes().ToArray());
+            return BigInteger.Parse(str.ToLower().Substring(2), NumberStyles.AllowHexSpecifier);
         }
-
-        public static IEnumerable<byte> ToBytes(this string str)
-        {
-            
-            str = str.Replace(" ", "");
-            for (var i = 0; i < str.Length; i += 2)
-            {
-                var sub = $"{str[i]}{str[i + 1]}";
-                yield return Convert.ToByte(sub, 16);
-            }
-        }
-
     }
 }

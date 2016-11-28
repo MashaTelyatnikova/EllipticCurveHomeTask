@@ -6,7 +6,7 @@ namespace HomeTask.EllipticCurve
     public class OrdinaryEllipticCurve : EllipticCurve
     {
         public OrdinaryEllipticCurve(BigInteger a, BigInteger b, BigInteger p) :
-            base(a, b, p, (x, y) => y.Pow(2) - x.Pow(3) - x*a - b)
+            base(a, b, p, (x, y) => BigInteger.ModPow(y, 2, p) - (BigInteger.Pow(x, 2) + x*a + b).Mode(p))
         {
         }
 

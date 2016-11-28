@@ -6,19 +6,19 @@ namespace HomeTask.EllipticCurve
     public class SuperSingularEllipticCurve : EllipticCurve
     {
         public SuperSingularEllipticCurve(BigInteger a, BigInteger b, BigInteger c, BigInteger p) :
-            base(a, b, p, (x, y) => y.Pow(2) + y*a - x.Pow(3) - x*b - c)
+            base(a, b, p, (x, y) => (BigInteger.Pow(y, 2) + y*a).Mode(p) - (BigInteger.Pow(x, 3) + x*b + c).Mode(p))
         {
         }
 
         protected override EllipticCurvePoint DoublePoint(EllipticCurvePoint first)
         {
-            var numerator = first.X.Pow(4) + b.Pow(2);
+            var numerator = BigInteger.Pow(first.X, 4) + BigInteger.Pow(b, 2);
             var denominator = a*a;
             var invertedDemominator = denominator.Invert(p);
 
             var x = (numerator*invertedDemominator).Mode(p);
             var y =
-                (first.Y + a + (first.X.Pow(2) + b)*(a.Invert(p))*(first.X + x))
+                (first.Y + a + (BigInteger.Pow(first.X, 2) + b)*(a.Invert(p))*(first.X + x))
                     .Mode(p);
 
             return new EllipticCurvePoint(x, y);
