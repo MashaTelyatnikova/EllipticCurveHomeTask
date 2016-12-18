@@ -80,23 +80,22 @@ namespace HomeTask
                     {
                         var c = BigInteger.Parse(tokenizer.NextWord());
                         var type = tokenizer.NextInt();
-                        var m = modular;
-                        modular = BigInteger.Pow(2, (int) modular);
+                        var m = BigInteger.Parse(tokenizer.NextWord());
+                        modular = BigInteger.Pow(2, (int) modular - 1);
                         switch (type)
                         {
                             case 0:
                             {
-                                //todo read modular polynom
-                                curve = new SuperSingularEllipticCurve(new GaluaBigInteger(a, modular, m),
-                                    new GaluaBigInteger(b, modular, m), new GaluaBigInteger(c, modular, m),
-                                    new GaluaBigInteger(modular, modular, m));
+                                curve = new SuperSingularEllipticCurve(new GaluaBigInteger(a, m, modular),
+                                    new GaluaBigInteger(b, m, modular), new GaluaBigInteger(c, m, modular),
+                                    new GaluaBigInteger(m, m, modular));
                                 break;
                             }
                             case 1:
                             {
-                                curve = new NonSupersSingularEllipticCurve(new GaluaBigInteger(a, modular, m),
-                                    new GaluaBigInteger(b, modular, m), new GaluaBigInteger(c, modular, m),
-                                    new GaluaBigInteger(modular, modular, m));
+                                curve = new NonSupersSingularEllipticCurve(new GaluaBigInteger(a, m, modular),
+                                    new GaluaBigInteger(b, m, modular), new GaluaBigInteger(c, m, modular),
+                                    new GaluaBigInteger(modular, m, modular));
                                 break;
                             }
                             default:
