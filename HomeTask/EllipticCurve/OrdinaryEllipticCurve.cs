@@ -1,21 +1,18 @@
-﻿using System.Numerics;
-using EllipticCurveUtils;
-
-namespace HomeTask.EllipticCurve
+﻿namespace HomeTask.EllipticCurve
 {
     public class OrdinaryEllipticCurve : EllipticCurve
     {
-        public OrdinaryEllipticCurve(BigInteger a, BigInteger b, BigInteger p) :
-            base(a, b, p, (x, y) => BigInteger.ModPow(y, 2, p) - (BigInteger.Pow(x, 2) + x*a + b).Mode(p))
+        public OrdinaryEllipticCurve(MyBigInteger a, MyBigInteger b, MyBigInteger p) :
+            base(a, b, p, (x, y) => y.ModPow(y.Get(2), p) - (x.Pow(x.Get(2)) + x*a + b).Mode(p))
         {
         }
 
         protected override EllipticCurvePoint DoublePoint(EllipticCurvePoint first)
         {
-            var numerator = 3*first.X*first.X + a;
-            var denominator = (2*first.Y).Mode(p);
+            var numerator = a.Get(3)*first.X*first.X + a;
+            var denominator = (a.Get(2) * first.Y).Mode(p);
             
-            var invertedToDenominator = denominator.Invert(p);
+            var invertedToDenominator = denominator.Invert();
             var lambda = numerator*invertedToDenominator;
 
             var x = (lambda*lambda).Mode(p);
@@ -28,7 +25,7 @@ namespace HomeTask.EllipticCurve
         {
             var numerator = second.Y - first.Y; ;
             var denominator = (second.X - first.X).Mode(p);
-            var invertedToDenominator = denominator.Invert(p);
+            var invertedToDenominator = denominator.Invert();
             var lambda = numerator*invertedToDenominator;
 
             var x = (lambda*lambda - first.X - second.X).Mode(p);

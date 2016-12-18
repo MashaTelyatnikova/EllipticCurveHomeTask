@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
 using System.Numerics;
-using EllipticCurveUtils;
 using Fclp;
 using HomeTask.EllipticCurve;
 
@@ -38,7 +36,6 @@ namespace HomeTask
         public static void Main(string[] args)
         {
             var arguments = Parser.Parse(args);
-
             if (arguments.HelpCalled)
             {
                 return;
@@ -76,23 +73,30 @@ namespace HomeTask
                     var b = tokenizer.NextWord().ToBigInteger();
                     if (characteristic == 0)
                     {
-                        curve = new OrdinaryEllipticCurve(a, b, modular);
+                        curve = new OrdinaryEllipticCurve(new MyBigInteger(a, modular), new MyBigInteger(b, modular),
+                            new MyBigInteger(modular, modular));
                     }
                     else if (characteristic == 1)
                     {
                         var c = BigInteger.Parse(tokenizer.NextWord());
                         var type = tokenizer.NextInt();
+                        var m = modular;
                         modular = BigInteger.Pow(2, (int) modular);
                         switch (type)
                         {
                             case 0:
                             {
-                                curve = new SuperSingularEllipticCurve(a, b, c, modular);
+                                //todo read modular polynom
+                                curve = new SuperSingularEllipticCurve(new GaluaBigInteger(a, modular, m),
+                                    new GaluaBigInteger(b, modular, m), new GaluaBigInteger(c, modular, m),
+                                    new GaluaBigInteger(modular, modular, m));
                                 break;
                             }
                             case 1:
                             {
-                                curve = new NonSupersSingularEllipticCurve(a, b, c, modular);
+                                curve = new NonSupersSingularEllipticCurve(new GaluaBigInteger(a, modular, m),
+                                    new GaluaBigInteger(b, modular, m), new GaluaBigInteger(c, modular, m),
+                                    new GaluaBigInteger(modular, modular, m));
                                 break;
                             }
                             default:
@@ -117,11 +121,12 @@ namespace HomeTask
                     else
                     {
                         var t = tokenizer.NextInt();
-                        var startPoint = new EllipticCurvePoint(0, 0);
+                        var startPoint = curve.Zero;
                         while (t > 0)
                         {
-                            var point = new EllipticCurvePoint(tokenizer.NextWord().ToBigInteger(),
-                                tokenizer.NextWord().ToBigInteger());
+                            var point = new EllipticCurvePoint(
+                                startPoint.X.Get(tokenizer.NextWord().ToBigInteger()),
+                                startPoint.X.Get(tokenizer.NextWord().ToBigInteger()));
                             if (!curve.Contains(point))
                             {
                                 writer.WriteLine($"Кривая не содержит точку {point.X}, {point.Y}");
@@ -138,8 +143,10 @@ namespace HomeTask
                         while (s > 0)
                         {
                             var n = tokenizer.NextInt();
-                            var point = new EllipticCurvePoint(tokenizer.NextWord().ToBigInteger(),
-                                tokenizer.NextWord().ToBigInteger());
+                            var zero = curve.Zero;
+                            var point = new EllipticCurvePoint(
+                                zero.X.Get(tokenizer.NextWord().ToBigInteger()),
+                                zero.X.Get(tokenizer.NextWord().ToBigInteger()));
                             if (!curve.Contains(point))
                             {
                                 writer.WriteLine($"Кривая не содержит точку {point.X}, {point.Y}");

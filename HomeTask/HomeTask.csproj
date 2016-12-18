@@ -48,6 +48,8 @@
     <Compile Include="EllipticCurve\IEllipticCurve.cs" />
     <Compile Include="EllipticCurve\NonSupersSingularEllipticCurve.cs" />
     <Compile Include="EllipticCurve\OrdinaryEllipticCurve.cs" />
+    <Compile Include="GaluaBigInteger.cs" />
+    <Compile Include="MyBigInteger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StreamTokenizer.cs" />

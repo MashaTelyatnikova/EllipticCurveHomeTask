@@ -1,30 +1,28 @@
 ﻿using System;
-using System.Drawing;
-using System.Numerics;
-using EllipticCurveUtils;
 
 namespace HomeTask.EllipticCurve
 {
     public abstract class EllipticCurve : IEllipticCurve
     {
-        protected readonly BigInteger a;
-        protected readonly BigInteger b;
-        protected readonly BigInteger p;
-        protected static readonly EllipticCurvePoint Zero = new EllipticCurvePoint(0, 0);
-        private readonly Func<BigInteger, BigInteger, BigInteger> equation;
+        protected readonly MyBigInteger a;
+        protected readonly MyBigInteger b;
+        protected readonly MyBigInteger p;
+        public EllipticCurvePoint Zero { get; }
+        private readonly Func<MyBigInteger, MyBigInteger, MyBigInteger> equation;
 
-        protected EllipticCurve(BigInteger a, BigInteger b, BigInteger p,
-            Func<BigInteger, BigInteger, BigInteger> equation)
+        protected EllipticCurve(MyBigInteger a, MyBigInteger b, MyBigInteger p,
+            Func<MyBigInteger, MyBigInteger, MyBigInteger> equation)
         {
             this.a = a;
             this.b = b;
             this.p = p;
+            this.Zero = new EllipticCurvePoint(a.Zero(), b.Zero());
             this.equation = equation;
         }
 
         public bool IsNonSpecial()
         {
-            return -(4*a*a*a + 27*b*b) != 0;
+            return a.Get(-1)*(a.Get(4)*a*a*a + a.Get(27)*b*b) != a.Zero();
         }
 
         public EllipticCurvePoint Add(EllipticCurvePoint first, EllipticCurvePoint second)
@@ -47,12 +45,7 @@ namespace HomeTask.EllipticCurve
 
         public bool Contains(EllipticCurvePoint point)
         {
-            return equation(point.X, point.Y).Mode(p) == 0;
-        }
-
-        public bool IsSpecial()
-        {
-            return (4*a*a*a + 27*b*b).Mode(p) == 0;
+            return equation(point.X, point.Y) % p == point.X.Zero();
         }
     }
 }

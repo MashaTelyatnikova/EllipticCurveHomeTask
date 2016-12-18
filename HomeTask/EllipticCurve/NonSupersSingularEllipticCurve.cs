@@ -1,12 +1,11 @@
-﻿using System.Numerics;
-using EllipticCurveUtils;
-
-namespace HomeTask.EllipticCurve
+﻿namespace HomeTask.EllipticCurve
 {
     public class NonSupersSingularEllipticCurve : EllipticCurve
     {
-        public NonSupersSingularEllipticCurve(BigInteger a, BigInteger b, BigInteger c, BigInteger p) :
-            base(a, b, p, (x, y) => (BigInteger.Pow(y, 2) + a*x).Mode(p) - (x*y + BigInteger.Pow(x, 3) + b* BigInteger.Pow(x, 2) + c).Mode(p))
+        public NonSupersSingularEllipticCurve(MyBigInteger a, MyBigInteger b, MyBigInteger c, MyBigInteger p) :
+            base(
+                a, b, p,
+                (x, y) => y*y + a*x*y - x*x*x - b*x*x - c)
         {
         }
 
@@ -14,24 +13,24 @@ namespace HomeTask.EllipticCurve
         {
             var numerator = first.Y + second.Y;
             var denominator = first.X + second.X;
-            var invertedDenominator = denominator.Mode(p).Invert(p);
-            var lambda = (numerator*invertedDenominator).Mode(p);
+            var invertedDenominator = denominator.Invert();
+            var lambda = numerator*invertedDenominator;
 
-            var x = (lambda.Pow(2) + lambda + denominator + a).Mode(p);
-            var y = (lambda*(first.X + x) + x + first.Y).Mode(p);
+            var x = first.X + second.X + b + lambda*lambda + a*lambda;
+            var y = lambda*x + lambda*first.X + first.Y;
 
-            return new EllipticCurvePoint(x, y);
+            return new EllipticCurvePoint(x, a*x + y);
         }
 
         protected override EllipticCurvePoint DoublePoint(EllipticCurvePoint point)
         {
-            var invertedX1 = point.X.Mode(p).Invert(p);
-            var lambda = (point.X + point.Y*invertedX1).Mode(p);
+            var invertedX = (a*point.X).Invert();
+            var lambda = (point.X*point.X + a*point.Y)*invertedX;
 
-            var x = (BigInteger.Pow(lambda, 2) + lambda + a).Mode(p);
-            var y = (BigInteger.Pow(point.X, 2) + (lambda + 1)*x).Mode(p);
+            var x = point.X + point.X + b + lambda * lambda + a * lambda;
+            var y = lambda * x + lambda * point.X + point.Y;
 
-            return new EllipticCurvePoint(x, y);
+            return new EllipticCurvePoint(x, a * x + y);
         }
     }
 }

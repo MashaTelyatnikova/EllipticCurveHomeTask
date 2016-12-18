@@ -1,13 +1,11 @@
-﻿using System.Numerics;
-
-namespace HomeTask.EllipticCurve
+﻿namespace HomeTask.EllipticCurve
 {
     public class EllipticCurvePoint
     {
-        public BigInteger X { get; }
-        public BigInteger Y { get; }
+        public MyBigInteger X { get; }
+        public MyBigInteger Y { get; }
 
-        public EllipticCurvePoint(BigInteger x, BigInteger y)
+        public EllipticCurvePoint(MyBigInteger x, MyBigInteger y)
         {
             X = x;
             Y = y;
@@ -21,7 +19,7 @@ namespace HomeTask.EllipticCurve
             }
 
             var point = (EllipticCurvePoint) obj;
-            return point.X == X && point.Y == Y;
+            return point.X.Equals(X) && point.Y.Equals(Y);
         }
 
         public override int GetHashCode()
