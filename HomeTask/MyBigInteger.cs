@@ -154,5 +154,10 @@ namespace HomeTask
         {
             return a.value != b.value;
         }
+
+        public override string ToString()
+        {
+            return value.ToString();
+        }
     }
 }

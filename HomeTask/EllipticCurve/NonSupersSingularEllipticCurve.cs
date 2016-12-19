@@ -2,11 +2,13 @@
 {
     public class NonSupersSingularEllipticCurve : EllipticCurve
     {
+        private MyBigInteger c;
         public NonSupersSingularEllipticCurve(MyBigInteger a, MyBigInteger b, MyBigInteger c, MyBigInteger p) :
             base(
                 a, b, p,
                 (x, y) => y*y + a*x*y - x*x*x - b*x*x - c)
         {
+            this.c = c;
         }
 
         protected override EllipticCurvePoint AddDifferent(EllipticCurvePoint first, EllipticCurvePoint second)

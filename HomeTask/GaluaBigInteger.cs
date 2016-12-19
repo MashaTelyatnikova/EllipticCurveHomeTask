@@ -57,7 +57,7 @@ namespace HomeTask
                 if ((b & 1) != 0)
                     p ^= a;
 
-                if ((a & n) != 0)
+                if (a >= n)
                     a = (a << 1) ^ modular;
                 else
                     a <<= 1;

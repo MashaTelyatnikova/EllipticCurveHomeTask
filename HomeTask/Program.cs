@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Numerics;
-using EllipticCurveUtils;
 using Fclp;
 using HomeTask.EllipticCurve;
 
@@ -70,6 +69,7 @@ namespace HomeTask
                     EllipticCurve.EllipticCurve curve = null;
                     var characteristic = tokenizer.NextInt();
                     var modular = tokenizer.NextWord().ToBigInteger();
+
                     var a = tokenizer.NextWord().ToBigInteger();
                     var b = tokenizer.NextWord().ToBigInteger();
                     if (characteristic == 0)
@@ -82,21 +82,21 @@ namespace HomeTask
                         var c = tokenizer.NextWord().ToBigInteger();
                         var type = tokenizer.NextInt();
                         var m = tokenizer.NextWord().ToBigInteger();
-                        modular = new BigInteger(2).Pow(modular - 1);
+                        var modular1 = BigInteger.Pow(2, (int) modular - 1);
                         switch (type)
                         {
                             case 0:
                             {
-                                curve = new SuperSingularEllipticCurve(new GaluaBigInteger(a, m, modular),
-                                    new GaluaBigInteger(b, m, modular), new GaluaBigInteger(c, m, modular),
-                                    new GaluaBigInteger(m, m, modular));
+                                curve = new SuperSingularEllipticCurve(new GaluaBigInteger(a, m, modular1),
+                                    new GaluaBigInteger(b, m, modular1), new GaluaBigInteger(c, m, modular1),
+                                    new GaluaBigInteger(m, m, modular1));
                                 break;
                             }
                             case 1:
                             {
-                                curve = new NonSupersSingularEllipticCurve(new GaluaBigInteger(a, m, modular),
-                                    new GaluaBigInteger(b, m, modular), new GaluaBigInteger(c, m, modular),
-                                    new GaluaBigInteger(modular, m, modular));
+                                curve = new NonSupersSingularEllipticCurve(new GaluaBigInteger(a, m, modular1),
+                                    new GaluaBigInteger(b, m, modular1), new GaluaBigInteger(c, m, modular1),
+                                    new GaluaBigInteger(modular1, m, modular1));
                                 break;
                             }
                             default:
@@ -114,7 +114,7 @@ namespace HomeTask
                         Environment.Exit(0);
                     }
 
-                    if (!curve.IsNonSpecial())
+                    if ((curve is OrdinaryEllipticCurve) && !curve.IsNonSpecial())
                     {
                         writer.WriteLine("Кривая особая");
                     }
