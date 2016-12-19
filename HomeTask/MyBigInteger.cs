@@ -112,7 +112,7 @@ namespace HomeTask
         public override bool Equals(object obj)
         {
             var x = (MyBigInteger) obj;
-            return x.value == value;
+            return (this%Get(modular)) == (x%Get(modular));
         }
 
         public override int GetHashCode()

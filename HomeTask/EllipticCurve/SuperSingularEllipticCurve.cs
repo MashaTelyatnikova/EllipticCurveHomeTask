@@ -11,7 +11,7 @@
         {
             var lambda = (first.X*first.X + b)*a.Invert();
 
-            var x = lambda*lambda + first.X + first.X;
+            var x = lambda*lambda;
             var y = lambda*x + lambda*first.X + first.Y;
 
             return new EllipticCurvePoint(x, a + y);
@@ -28,6 +28,16 @@
             var y = lambda*x + lambda*first.X + first.Y;
 
             return new EllipticCurvePoint(x, a + y);
+        }
+
+        protected override bool AreDifferent(EllipticCurvePoint first, EllipticCurvePoint second)
+        {
+            return first.X != second.X;
+        }
+
+        protected override bool AreOpposite(EllipticCurvePoint first, EllipticCurvePoint second)
+        {
+            return second.Equals(new EllipticCurvePoint(first.X, a + first.Y));
         }
     }
 }

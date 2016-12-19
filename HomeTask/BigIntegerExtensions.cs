@@ -16,5 +16,21 @@ namespace EllipticCurveUtils
             }
             return h - 1;
         }
+
+        public static BigInteger Pow(this BigInteger a, BigInteger n)
+        {
+            
+            var p = n/int.MaxValue;
+            while (p != 0)
+            {
+                
+                a = a << int.MaxValue;
+                p--;
+            }
+            var c = (int) n%int.MaxValue;
+            a = a << c;
+            a = a >> 1;
+            return a;
+        }
     }
 }

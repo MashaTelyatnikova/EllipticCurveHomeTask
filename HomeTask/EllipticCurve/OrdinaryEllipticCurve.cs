@@ -3,20 +3,20 @@
     public class OrdinaryEllipticCurve : EllipticCurve
     {
         public OrdinaryEllipticCurve(MyBigInteger a, MyBigInteger b, MyBigInteger p) :
-            base(a, b, p, (x, y) => y.ModPow(y.Get(2), p) - (x.Pow(x.Get(2)) + x*a + b).Mode(p))
+            base(a, b, p, (x, y) => y*y - x*x*x - a*x - b)
         {
         }
 
         protected override EllipticCurvePoint DoublePoint(EllipticCurvePoint first)
         {
             var numerator = a.Get(3)*first.X*first.X + a;
-            var denominator = (a.Get(2) * first.Y).Mode(p);
+            var denominator = (a.Get(2) * first.Y)%p;
             
             var invertedToDenominator = denominator.Invert();
-            var lambda = numerator*invertedToDenominator;
+            var lambda = (numerator*invertedToDenominator)%p;
 
-            var x = (lambda*lambda).Mode(p);
-            var y = (lambda*(first.X - x) - first.Y).Mode(p);
+            var x = (lambda*lambda)%p;
+            var y = (lambda*(first.X - x) - first.Y)%p;
 
             return new EllipticCurvePoint(x, y);
         }
@@ -32,6 +32,16 @@
             var y = (lambda*(first.X - x) - first.Y).Mode(p);
 
             return new EllipticCurvePoint(x, y);
+        }
+
+        protected override bool AreDifferent(EllipticCurvePoint first, EllipticCurvePoint second)
+        {
+            return first.X != second.X || first.Y != second.Y;
+        }
+
+        protected override bool AreOpposite(EllipticCurvePoint first, EllipticCurvePoint second)
+        {
+            return second.Equals(new EllipticCurvePoint(first.X, (first.X.Get(-1)*first.Y)%p));
         }
     }
 }

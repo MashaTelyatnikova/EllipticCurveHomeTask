@@ -27,10 +27,23 @@
             var invertedX = (a*point.X).Invert();
             var lambda = (point.X*point.X + a*point.Y)*invertedX;
 
-            var x = point.X + point.X + b + lambda * lambda + a * lambda;
+            var x = b + lambda * lambda + a * lambda;
             var y = lambda * x + lambda * point.X + point.Y;
 
             return new EllipticCurvePoint(x, a * x + y);
+        }
+
+        protected override bool AreDifferent(EllipticCurvePoint first, EllipticCurvePoint second)
+        {
+            return first.X != second.X;
+        }
+
+        protected override bool AreOpposite(EllipticCurvePoint first, EllipticCurvePoint second)
+        {
+            var oppositeX = first.X;
+            var oppositeY = a*first.X + first.Y;
+
+            return second.Equals(new EllipticCurvePoint(oppositeX, oppositeY));
         }
     }
 }

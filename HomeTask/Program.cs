@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Numerics;
+using EllipticCurveUtils;
 using Fclp;
 using HomeTask.EllipticCurve;
 
@@ -78,10 +79,10 @@ namespace HomeTask
                     }
                     else if (characteristic == 1)
                     {
-                        var c = BigInteger.Parse(tokenizer.NextWord());
+                        var c = tokenizer.NextWord().ToBigInteger();
                         var type = tokenizer.NextInt();
-                        var m = BigInteger.Parse(tokenizer.NextWord());
-                        modular = BigInteger.Pow(2, (int) modular - 1);
+                        var m = tokenizer.NextWord().ToBigInteger();
+                        modular = new BigInteger(2).Pow(modular - 1);
                         switch (type)
                         {
                             case 0:

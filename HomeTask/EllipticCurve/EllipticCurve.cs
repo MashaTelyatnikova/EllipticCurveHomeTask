@@ -37,15 +37,23 @@ namespace HomeTask.EllipticCurve
                 return first;
             }
 
-            return first.Equals(second) ? DoublePoint(first) : AddDifferent(first, second);
+            if (AreOpposite(first, second))
+            {
+                return Zero;
+            }
+
+            return AreDifferent(first, second) ? AddDifferent(first, second) : DoublePoint(first);
         }
 
+        protected abstract bool AreOpposite(EllipticCurvePoint first, EllipticCurvePoint second);
+        protected abstract bool AreDifferent(EllipticCurvePoint first, EllipticCurvePoint second);
         protected abstract EllipticCurvePoint DoublePoint(EllipticCurvePoint point);
         protected abstract EllipticCurvePoint AddDifferent(EllipticCurvePoint first, EllipticCurvePoint second);
 
         public bool Contains(EllipticCurvePoint point)
         {
-            return equation(point.X, point.Y) % p == point.X.Zero();
+            var res = equation(point.X, point.Y)%p;
+            return res == point.X.Zero();
         }
     }
 }
