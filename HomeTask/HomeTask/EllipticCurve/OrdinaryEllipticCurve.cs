@@ -15,7 +15,7 @@
             var invertedToDenominator = denominator.Invert();
             var lambda = (numerator*invertedToDenominator)%p;
 
-            var x = (lambda*lambda - first.X - first.X)%p;
+            var x = (lambda*lambda)%p;
             var y = (lambda*(first.X - x) - first.Y)%p;
 
             return new EllipticCurvePoint(x, y);

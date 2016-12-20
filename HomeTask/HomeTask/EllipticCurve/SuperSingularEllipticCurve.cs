@@ -11,7 +11,7 @@
         {
             var lambda = (first.X*first.X + b)*a.Invert();
 
-            var x = lambda*lambda + first.X + first.X;
+            var x = lambda*lambda;
             var y = lambda*x + lambda*first.X + first.Y;
 
             return new EllipticCurvePoint(x, a + y);

@@ -29,7 +29,7 @@
             var invertedX = (a*point.X).Invert();
             var lambda = (point.X*point.X + a*point.Y)*invertedX;
 
-            var x = b + lambda * lambda + a * lambda + point.X + point.X;
+            var x = b + lambda * lambda + a * lambda;
             var y = lambda * x + lambda * point.X + point.Y;
 
             return new EllipticCurvePoint(x, a * x + y);
