@@ -36,7 +36,7 @@
 
         protected override bool AreDifferent(EllipticCurvePoint first, EllipticCurvePoint second)
         {
-            return first.X != second.X || first.Y != second.Y;
+            return first.X != second.X;
         }
 
         protected override bool AreOpposite(EllipticCurvePoint first, EllipticCurvePoint second)

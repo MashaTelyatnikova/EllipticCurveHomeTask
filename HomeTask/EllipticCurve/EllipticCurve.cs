@@ -27,19 +27,19 @@ namespace HomeTask.EllipticCurve
 
         public EllipticCurvePoint Add(EllipticCurvePoint first, EllipticCurvePoint second)
         {
-            if (Zero.Equals(first))
+            if (first is InfinityPoint)
             {
                 return second;
             }
 
-            if (Zero.Equals(second))
+            if (second is InfinityPoint)
             {
                 return first;
             }
 
             if (AreOpposite(first, second))
             {
-                return Zero;
+                return new InfinityPoint();
             }
 
             return AreDifferent(first, second) ? AddDifferent(first, second) : DoublePoint(first);

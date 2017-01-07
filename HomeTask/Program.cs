@@ -1,70 +1,24 @@
 ﻿using System;
 using System.IO;
 using System.Numerics;
-using Fclp;
 using HomeTask.EllipticCurve;
 
 namespace HomeTask
 {
     public static class Program
     {
-        private class RunOptions
-        {
-            public string InputFile { get; set; }
-
-            public string OutputFile { get; set; }
-        }
-
-        private static readonly FluentCommandLineParser<RunOptions> Parser;
-
-        static Program()
-        {
-            Parser = new FluentCommandLineParser<RunOptions>();
-            Parser.Setup(options => options.InputFile)
-                .As("if")
-                .WithDescription("Параметр input file");
-            Parser.Setup(options => options.OutputFile)
-                .As("of")
-                .WithDescription("Параметр output file");
-            Parser
-                .SetupHelp("h", "help")
-                .WithHeader(
-                    $"{AppDomain.CurrentDomain.FriendlyName} [-if input file] [-of output file]")
-                .Callback(text => Console.WriteLine(text));
-        }
-
         public static void Main(string[] args)
         {
-            var arguments = Parser.Parse(args);
-            if (arguments.HelpCalled)
-            {
-                return;
-            }
-
-            if (arguments.HasErrors)
-            {
-                Parser.HelpOption.ShowHelp(Parser.Options);
-                return;
-            }
-
-            StreamReader fileReader = null;
-            if (Parser.Object.InputFile != null)
-            {
-                fileReader = new StreamReader(Parser.Object.InputFile);
-            }
+            StreamReader fileReader = fileReader = new StreamReader(args[0]);
 
             try
             {
-                StreamWriter fileWriter = null;
-                if (Parser.Object.OutputFile != null)
-                {
-                    fileWriter = new StreamWriter(Parser.Object.OutputFile);
-                }
-
+                StreamWriter fileWriter = fileWriter = new StreamWriter(args[1]);
+                
                 try
                 {
-                    var tokenizer = new StreamTokenizer(fileReader ?? Console.In);
-                    var writer = fileWriter ?? Console.Out;
+                    var tokenizer = new StreamTokenizer(fileReader);
+                    var writer = fileWriter;
 
                     EllipticCurve.EllipticCurve curve = null;
                     var characteristic = tokenizer.NextInt();
@@ -121,35 +75,60 @@ namespace HomeTask
                     else
                     {
                         var t = tokenizer.NextInt();
-                        var startPoint = curve.Zero;
-                        while (t > 0)
+                        var tCopy = t;
+                        var zeroX = curve.Zero.X;
+                        if (t > 0)
                         {
-                            var point = new EllipticCurvePoint(
-                                startPoint.X.Get(tokenizer.NextWord().ToBigInteger()),
-                                startPoint.X.Get(tokenizer.NextWord().ToBigInteger()));
-                            if (!curve.Contains(point))
+                            var startPoint = new EllipticCurvePoint(
+                                zeroX.Get(tokenizer.NextWord().ToBigInteger()),
+                                zeroX.Get(tokenizer.NextWord().ToBigInteger()));
+                            var flag = false;
+                            while (t > 1)
                             {
-                                writer.WriteLine($"Кривая не содержит точку {point.X}, {point.Y}");
+                                var point = new EllipticCurvePoint(
+                                    zeroX.Get(tokenizer.NextWord().ToBigInteger()),
+                                    zeroX.Get(tokenizer.NextWord().ToBigInteger()));
+
+                                if (t == tCopy && !curve.Contains(startPoint))
+                                {
+                                    writer.WriteLine($"Кривая не содержит точку {startPoint.X}, {startPoint.Y}");
+                                    flag = true;
+                                    break;
+                                }
+                                else if (!curve.Contains(point))
+                                {
+                                    writer.WriteLine($"Кривая не содержит точку {point.X}, {point.Y}");
+                                    flag = true;
+                                    break;
+                                }
+                                else
+                                {
+                                    startPoint = curve.Add(startPoint, point);
+                                }
+                                --t;
+                            }
+                            if (!flag)
+                            {
+                                writer.WriteLine($"Результат сложения точек = {startPoint}");
                             }
                             else
                             {
-                                startPoint = curve.Add(startPoint, point);
+                                writer.WriteLine($"Результат сложения точек неизвестен");
                             }
-                            --t;
                         }
-                        writer.WriteLine($"Результат сложения точек = ({startPoint.X}, {startPoint.Y})");
 
                         var s = tokenizer.NextInt();
                         while (s > 0)
                         {
                             var n = tokenizer.NextInt();
+                            var nCopy = n;
                             var zero = curve.Zero;
                             var point = new EllipticCurvePoint(
                                 zero.X.Get(tokenizer.NextWord().ToBigInteger()),
                                 zero.X.Get(tokenizer.NextWord().ToBigInteger()));
                             if (!curve.Contains(point))
                             {
-                                writer.WriteLine($"Кривая не содержит точку {point.X}, {point.Y}");
+                                writer.WriteLine($"Кривая не содержит точку {point}");
                             }
                             else
                             {
@@ -160,7 +139,7 @@ namespace HomeTask
                                     --n;
                                 }
 
-                                writer.WriteLine($"Результат = ({start.X}, {start.Y})");
+                                writer.WriteLine($"Результат умножения точки {point} на {nCopy} = {start}");
                             }
                             --s;
                         }

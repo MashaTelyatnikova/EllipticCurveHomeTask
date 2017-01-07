@@ -1,5 +1,17 @@
 ﻿namespace HomeTask.EllipticCurve
 {
+    public class InfinityPoint : EllipticCurvePoint
+    {
+        public InfinityPoint() : base(new MyBigInteger(0, 0), new MyBigInteger(0, 0))
+        {
+
+        }
+
+        public override string ToString()
+        {
+            return "Бесконечно удалённая точка";
+        }
+    }
     public class EllipticCurvePoint
     {
         public MyBigInteger X { get; }
@@ -25,6 +37,11 @@
         public override int GetHashCode()
         {
             return X.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return $"({X}, {Y})";
         }
     }
 }
